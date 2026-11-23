@@ -1315,6 +1315,26 @@ export const Sidebar = memo(function Sidebar({ open, onClose, collapseToIcons = 
           />
         </div>
       </div>}
+      {!q && (
+        <button
+          type="button"
+          data-sidebar-hero
+          data-tour="workspace-home"
+          onClick={() => dispatch({ type: "showWorkspace" })}
+          aria-current={state.activeView === "workspace" ? "page" : undefined}
+          className={cn(
+            "relative mx-2 mb-2 overflow-hidden rounded-2xl border px-3 py-3 text-left transition",
+            density === "icons" ? "text-center" : "",
+            state.activeView === "workspace"
+              ? "border-accent/50 bg-accent/10 text-ink"
+              : "border-hairline/60 bg-elevated/40 text-ink-secondary hover:border-accent/40 hover:bg-panel hover:text-ink",
+          )}
+        >
+          <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-accent/70 via-ink-tertiary/20 to-transparent" />
+          <span className="block text-[14px] font-semibold tracking-[-0.01em]">{t("sidebar.nav.today")}</span>
+          <span className="mt-0.5 block text-[11px] text-ink-tertiary">{t("workspace.sidebarSubtitle")}</span>
+        </button>
+      )}
       {!q && <TeamSideSwitch compact={density === "icons"} listOnly={phone} />}{!q && <SidebarInboxRow icons={density === "icons"} large={!advanced} running={attentionHasRunningWork(attention)} onOpened={phone ? onClose : undefined} />}
       {universalPins && pinnedBots.length > 0 && !simpleDesk && (
         <div
