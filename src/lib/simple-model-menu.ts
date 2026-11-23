@@ -7,6 +7,7 @@ import { engineDisplayName, isCustomOnly, SIGN_IN_FAMILY_LABEL, signInFamily, sp
 import { favoriteKey, favoriteModels } from "./favorite-models";
 import { localModelDetail } from "./local-model";
 import { displayModelLabel, shortModelLabel } from "./model-friendly";
+import { consumerModelLabel } from "./consumer-labels";
 import { choiceIsSelected, modelChoices, takesTypedModels, type ModelChoice } from "./model-choices";
 
 export type ModelOption = InstanceInfo["models"]["options"][number];
@@ -106,7 +107,8 @@ export function variantSuffix(instance: InstanceInfo | undefined, model: string,
 export function modelName(instance: InstanceInfo | undefined, model: string, variant?: string): string {
   const option = instance?.models.options.find((candidate) => candidate.id === model);
   if (!instance || !option) return model;
-  return displayModelLabel(modelOptionLabel(option), providerName(instance), option.custom) + variantSuffix(instance, model, variant);
+  const label = displayModelLabel(modelOptionLabel(option), providerName(instance), option.custom) + variantSuffix(instance, model, variant);
+  return consumerModelLabel(label);
 }
 
 export function repeatedModelLabels(options: readonly ModelOption[]): Set<string> {

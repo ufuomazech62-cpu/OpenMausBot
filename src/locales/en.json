@@ -11599,5 +11599,7 @@
   "maus.mobile.ask": "Ask MausBot",
   "maus.mobile.workspace": "Workspace",
   "maus.mobile.library": "Library",
-  "maus.mobile.system": "System"
+  "maus.mobile.system": "Account",
+  "maus.nav.connections": "Connections",
+  "maus.nav.preferences": "Preferences"
 }

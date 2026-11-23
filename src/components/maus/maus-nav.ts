@@ -1,6 +1,6 @@
 // Shared descriptors for the new Maus navigation. The labels come from the maus.* locale keys; the English copy is a
 // safety net for the window before a locale pack carries the new keys. Icons stay small and calm in both surfaces.
-import { BarChart3, BriefcaseBusiness, FolderOpen, House, Inbox, LayoutGrid, MessagesSquare, Settings2, UsersRound, type LucideIcon } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, FolderOpen, House, Inbox, Link2, MessagesSquare, SlidersHorizontal, UsersRound, type LucideIcon } from "lucide-react";
 
 import { t } from "@/lib/i18n";
 import type { LocaleKey } from "@/locales";
@@ -41,8 +41,8 @@ export const MAUS_NAV_ITEMS: Readonly<Record<MausNavId, MausNavItem>> = {
   files: { id: "files", labelKey: "maus.nav.files", fallback: "Files", Icon: FolderOpen },
   insights: { id: "insights", labelKey: "maus.nav.insights", fallback: "Insights", Icon: BarChart3 },
   team: { id: "team", labelKey: "maus.nav.team", fallback: "Team", Icon: UsersRound },
-  apps: { id: "apps", labelKey: "maus.nav.apps", fallback: "Apps", Icon: LayoutGrid },
-  settings: { id: "settings", labelKey: "maus.nav.settings", fallback: "Settings", Icon: Settings2 },
+  apps: { id: "apps", labelKey: "maus.nav.connections", fallback: "Connections", Icon: Link2 },
+  settings: { id: "settings", labelKey: "maus.nav.preferences", fallback: "Preferences", Icon: SlidersHorizontal },
 };
 
 export function mausNavLabel(id: MausNavId): string {

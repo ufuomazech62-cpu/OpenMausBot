@@ -6,7 +6,6 @@ import { useShowThreads } from "@/lib/thread-preferences";
 import { useWelcomeViewer, WelcomeGate } from "@/components/onboarding/WelcomeGate";
 import { MausBotWelcome } from "@/components/MausBotWelcome";
 import { NewBotNameHost } from "@/components/NewBotName";
-import { MemberApps } from "@/components/MemberApps";
 import { CloudTimeZoneSync } from "@/components/CloudTimeZone";
 import { cloudSignInDue, spotlightsQuiet, type WelcomeViewer } from "@/lib/onboarding";
 import { FirstConversationTour } from "@/components/onboarding/FirstConversationTour";
@@ -25,14 +24,17 @@ import { MausHome } from "@/components/maus/MausHome";
 import { MausNavRail } from "@/components/maus/MausNavRail";
 import { MausMobileBar } from "@/components/maus/MausMobileBar";
 import { MausMobileSheet } from "@/components/maus/MausMobileSheet";
+import { MausConnections } from "@/components/maus/MausConnections";
+import { MausInsights } from "@/components/maus/MausInsights";
+import { MausPreferences } from "@/components/maus/MausPreferences";
 import { GroupView } from "@/components/GroupView";
 import { ForkPanel } from "@/components/ForkPanel";
 import { PHONE_LAYOUT, SIDEBAR_AND_BOT_PANEL_FIT, SIDEBAR_AND_NARROW_PANEL_FIT, SIDEBAR_AND_PANEL_FIT, SIDEBAR_INLINE, TWO_SIDE_PANELS_FIT, useMediaQuery } from "@/lib/use-media-query";
 import { anySidePanel, botPanelFloats, panelsMovingSidebar, sidebarFoldsForPanel, type OpenSidePanels } from "@/lib/sidebar-fold";
 import { preloadConnectedApps } from "@/lib/connected-apps";
 import {
-  ActivityPanel, AnnouncementsPage, BotSettingsDialog, CloudAddDialog, ComputerPanel, FilesView, InboxPanel, InspectorPanel, KeyboardShortcutsModal, LocalVmWorkspace,
-  PluginsPanel, preloadScreens, PublishedAppsPage, RemoteAgentSettingsPanel, RemoteDesktopPanel, RoomPanel, SettingsModal, TeamFilesPage, TeamMapPage, TriggersPage,
+  ActivityPanel, BotSettingsDialog, CloudAddDialog, ComputerPanel, FilesView, InboxPanel, InspectorPanel, KeyboardShortcutsModal, LocalVmWorkspace,
+  preloadScreens, PublishedAppsPage, RemoteAgentSettingsPanel, RemoteDesktopPanel, RoomPanel, TeamFilesPage, TeamMapPage, TriggersPage,
 } from "@/components/lazy-screens";
 import { useAdvancedMode } from "@/lib/interface-mode";
 import { useRoomPanelShown } from "@/lib/room-panel";
@@ -408,7 +410,17 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
         onClose={closeDrawer}
       />}
       {!calendarFocus && phone && drawerOpen && <MausMobileSheet onClose={closeDrawer} menuRef={menuButtonRef} />}
-      {state.activeView === "team-map" ? (
+      {state.appSettingsOpen ? (
+        <MausPreferences
+          onOpenConnections={() => {
+            dispatch({ type: "toggleAppSettings", open: false });
+            dispatch({ type: "togglePlugins", open: true });
+          }}
+          onClose={() => dispatch({ type: "toggleAppSettings", open: false })}
+        />
+      ) : state.pluginsOpen ? (
+        <MausConnections />
+      ) : state.activeView === "team-map" ? (
         <TeamMapPage />
       ) : state.activeView === "files" ? (
         <FilesView />
@@ -417,7 +429,7 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
       ) : state.activeView === "published-apps" ? (
         <PublishedAppsPage />
       ) : state.activeView === "announcements" ? (
-        <AnnouncementsPage />
+        <MausInsights />
       ) : state.activeView === "team-files" && state.config?.team ? (
         <TeamFilesPage />
       ) : state.activeView === "routines" ? (
@@ -454,9 +466,7 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
           {loading.busy && <Loader2 size={20} className="animate-spin" />}
           <div className="text-[14px]">{t(loading.text)}</div>
           {loading.command && (
-            <div className="text-[12px]">
-            {t("app.loading.startServer")} <code className="rounded bg-raised px-1.5 py-0.5">pnpm dev:server</code>
-            </div>
+            <div className="text-[12px]">Getting your workspace ready. This usually takes a moment.</div>
           )}
         </main>
       )}
@@ -490,12 +500,10 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
       {notificationTray && !framed && <NotificationRail />}
       </div>
       </div>
-      {state.appSettingsOpen && <SettingsModal />}
       {cloudAddOpened.current && <CloudAddDialog />}
       <CloudHowTo />
       <CloudSetup viewer={viewer} welcomeShown={welcomeOnScreen} />
       <WelcomeKeeper viewer={viewer} />
-      {state.pluginsOpen && (team && viewer?.canSave === false ? <MemberApps /> : <PluginsPanel />)}
       <AppGrantNotice />
       {state.shortcutsOpen && (
         <KeyboardShortcutsModal
