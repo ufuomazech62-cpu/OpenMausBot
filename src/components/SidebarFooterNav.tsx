@@ -15,7 +15,7 @@ import { SidebarSectionHeader } from "./SidebarSectionHeader";
 import { UpdateIndicator } from "./UpdateIndicator";
 
 
-export function NavRow({
+function NavRow({
   id,
   label,
   icon,
