@@ -197,7 +197,7 @@ export function MausMobileSheet({ onClose, menuRef }: { onClose: () => void; men
       <nav aria-label="Primary" className="maus-sheet-nav mt-6 flex flex-col gap-5 px-3">
         {group(mausLabel("maus.mobile.workspace", "Workspace"), ["today", "inbox", "messages", "work"])}
         {group(mausLabel("maus.mobile.library", "Library"), library)}
-        {group(mausLabel("maus.mobile.system", "System"), ["apps", "settings"])}
+        {group(mausLabel("maus.mobile.system", "Account"), ["apps", "settings"])}
       </nav>
 
       <section className="flex flex-col gap-0.5 px-3 pb-8 pt-6">
