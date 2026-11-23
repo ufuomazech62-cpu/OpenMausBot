@@ -22,6 +22,7 @@ import { signInGateShown } from "./lib/sign-in-gate";
 import { startDesktopLaunchMarks } from "./lib/launch-marks";
 import { serverFetch } from "./lib/relay-server";
 import "./styles.css";
+import "./components/maus/maus.css";
 
 // Before first paint; settleInterfaceMode must run before applySkin writes omb-skin.
 settleInterfaceMode();

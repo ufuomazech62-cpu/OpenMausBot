@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, Loader2, Menu } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { CLOUD_LINK_SETTINGS, openBot, StoreProvider, useStore } from "@/state/store";
 import { nextShortcutBot, shortcutBots, shownBotIds } from "@/lib/sidebar-shortcut-order";
 import { useShowThreads } from "@/lib/thread-preferences";
@@ -21,10 +21,13 @@ import { viewerClosedRelease } from "@/components/computer-takeover";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatView } from "@/components/ChatView";
 import { HandoffExchangeHost } from "@/components/HandoffExchange";
-import { WorkspaceHome } from "@/components/WorkspaceHome";
+import { MausHome } from "@/components/maus/MausHome";
+import { MausNavRail } from "@/components/maus/MausNavRail";
+import { MausMobileBar } from "@/components/maus/MausMobileBar";
+import { MausMobileSheet } from "@/components/maus/MausMobileSheet";
 import { GroupView } from "@/components/GroupView";
 import { ForkPanel } from "@/components/ForkPanel";
-import { SIDEBAR_AND_BOT_PANEL_FIT, SIDEBAR_AND_NARROW_PANEL_FIT, SIDEBAR_AND_PANEL_FIT, SIDEBAR_INLINE, TWO_SIDE_PANELS_FIT, useMediaQuery } from "@/lib/use-media-query";
+import { PHONE_LAYOUT, SIDEBAR_AND_BOT_PANEL_FIT, SIDEBAR_AND_NARROW_PANEL_FIT, SIDEBAR_AND_PANEL_FIT, SIDEBAR_INLINE, TWO_SIDE_PANELS_FIT, useMediaQuery } from "@/lib/use-media-query";
 import { anySidePanel, botPanelFloats, panelsMovingSidebar, sidebarFoldsForPanel, type OpenSidePanels } from "@/lib/sidebar-fold";
 import { preloadConnectedApps } from "@/lib/connected-apps";
 import {
@@ -170,6 +173,7 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
   }, [state.cloudAdd]);
   const [localVmWorkspaceBotId, setLocalVmWorkspaceBotId] = useState<string | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const phone = useMediaQuery(PHONE_LAYOUT, false);
   const previousViewRef = useRef(state.activeView);
   const calendarOriginRef = useRef<"chat" | "team-map" | "web-panel">("chat");
   const loading = loadingLine({ connected: state.connected, hydrated: state.hydrated === true, developer: import.meta.env.DEV });
@@ -372,25 +376,23 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
       <ConversationShareDialogs />
       {!framed && strips}
       <div className="relative flex min-h-0 flex-1 overflow-x-clip">
-      {!calendarFocus && <button
-        type="button"
+      {!calendarFocus && <MausMobileBar
         ref={menuButtonRef}
-        aria-label={t("app.openBotList")}
-        aria-expanded={drawerOpen}
-        onClick={openDrawer}
-        className="absolute left-3 top-3 z-30 rounded-md p-1.5 text-ink-secondary hover:bg-raised hover:text-ink max-md:flex max-md:size-9 max-md:items-center max-md:justify-center max-md:rounded-full max-md:border max-md:border-hairline max-md:bg-card max-md:p-0 max-md:text-ink md:hidden"
-      >
-        <Menu size={18} className="max-md:hidden" />
-        <ChevronLeft size={20} aria-hidden="true" className="hidden max-md:block" />
-      </button>}
-      {drawerOpen && !calendarFocus && (
+        onOpen={openDrawer}
+        onAsk={() => {
+          dispatch({ type: "showWorkspace" });
+          requestAnimationFrame(() => window.dispatchEvent(new Event("maus:focus-delegate")));
+        }}
+      />}
+      {drawerOpen && !calendarFocus && phone && (
         <div
           aria-hidden
-          onMouseDown={(e) => e.target === e.currentTarget && hideDrawer()}
+          onMouseDown={(e) => e.target === e.currentTarget && closeDrawer()}
           className="absolute inset-0 z-30 bg-black/50 md:hidden"
         />
       )}
       {!calendarFocus && <PlacesRail />}
+      {!calendarFocus && <MausNavRail />}
       <NewLocalFromMenu />
       {/* A framed window shows the app, its sidebar and the chat or page, in a rounded card under the top bar and beside
           the window's rail: its top corners and its bottom-left corner are round, and it runs to the window's right and
@@ -402,9 +404,10 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
       {!calendarFocus && <Sidebar
         collapseToIcons={collapseSidebar}
         besidePanel={sidebarBesidePanel}
-        open={drawerOpen}
+        open={phone ? false : drawerOpen}
         onClose={closeDrawer}
       />}
+      {!calendarFocus && phone && drawerOpen && <MausMobileSheet onClose={closeDrawer} menuRef={menuButtonRef} />}
       {state.activeView === "team-map" ? (
         <TeamMapPage />
       ) : state.activeView === "files" ? (
@@ -435,7 +438,7 @@ function Shell({ viewer }: { viewer: WelcomeViewer | null }) {
       ) : firstRun === "sign-in" ? (
         <CloudEngineSignIn />
       ) : state.activeView === "workspace" ? (
-        <WorkspaceHome />
+        <MausHome />
       ) : chiefStep ? (
         <EmptyChatShell />
       ) : group ? (
